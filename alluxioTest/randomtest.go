@@ -37,3 +37,24 @@ func RandomTest() {
 	}
 	fmt.Println(maplengre)
 }
+
+func ZipfTest() {
+	rand.Seed(42)
+
+	// 定义Zipf参数
+	s := 10.1
+	v := 100.0
+
+	// 创建Zipf分布
+	zipf := rand.NewZipf(rand.New(rand.NewSource(0)), s, v, uint64(v))
+
+	// 生成100个符合Zipf分布的随机数
+	for i := 0; i < 100; i++ {
+		num := int(zipf.Uint64())
+		if num == 0 {
+			continue
+		}
+		fmt.Print(num)
+		fmt.Print(" ")
+	}
+}

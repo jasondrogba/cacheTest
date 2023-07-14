@@ -17,41 +17,42 @@ import (
 )
 
 func main() {
-	//done := make(chan bool)
-	count, _, circle := getArgTest.ParseArgs()
+
+	_, _, circle := getArgTest.ParseArgs()
 	instanceMap := ec2test.Getec2Instance()
-	//sshTest.SshTest(instanceMap)
-	//go metricsTest.BackProcess(instanceMap, done)
-	resultRemotesLRU := make([]float64, 0)
-	resultRemotesREPLICA := make([]float64, 0)
 
-	resultUFSsLRU := make([]float64, 0)
-	resultUFSsREPLICA := make([]float64, 0)
-	for i := 0; i < circle; i++ {
-		fmt.Println("@@@@@@@@@start Alluxio@@@@@@@@@@:", "LRU")
-		startTest.StartTest(instanceMap["Ec2Cluster-default-masters-0"], "LRU")
-		fmt.Println("@@@@@@@@@READ Alluxio@@@@@@@@@@:", count)
-		alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count)
-		fmt.Println("@@@@@@@@@METRIC Alluxio@@@@@@@@@@:")
-		resultRemote, resultUFS := metricsTest.BackProcess(instanceMap)
-		resultRemotesLRU = append(resultRemotesLRU, resultRemote)
-		resultUFSsLRU = append(resultUFSsLRU, resultUFS)
-		fmt.Println("@@@@@@@@@@circle@@@@@@@@@@@@@@:", circle)
+	for count := 2; count < 10; count++ {
+		resultRemotesLRU := make([]float64, 0)
+		resultRemotesREPLICA := make([]float64, 0)
+		resultUFSsLRU := make([]float64, 0)
+		resultUFSsREPLICA := make([]float64, 0)
+		for i := 0; i < circle; i++ {
+			fmt.Println("@@@@@@@@@start Alluxio@@@@@@@@@@:", "LRU")
+			startTest.StartTest(instanceMap["Ec2Cluster-default-masters-0"], "LRU")
+			fmt.Println("@@@@@@@@@READ Alluxio@@@@@@@@@@:", count*100)
+			alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count*100)
+			fmt.Println("@@@@@@@@@METRIC Alluxio@@@@@@@@@@:")
+			resultRemote, resultUFS := metricsTest.BackProcess(instanceMap)
+			resultRemotesLRU = append(resultRemotesLRU, resultRemote)
+			resultUFSsLRU = append(resultUFSsLRU, resultUFS)
+			fmt.Println("@@@@@@@@@@circle@@@@@@@@@@@@@@:", i)
+		}
+		for i := 0; i < circle; i++ {
+			fmt.Println("@@@@@@@@@start Alluxio@@@@@@@@@@:", "REPLICA")
+			startTest.StartTest(instanceMap["Ec2Cluster-default-masters-0"], "REPLICA")
+			fmt.Println("@@@@@@@@@READ Alluxio@@@@@@@@@@:", count*100)
+			alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count*100)
+			fmt.Println("@@@@@@@@@METRIC Alluxio@@@@@@@@@@:")
+			resultRemote, resultUFS := metricsTest.BackProcess(instanceMap)
+			resultRemotesREPLICA = append(resultRemotesREPLICA, resultRemote)
+			resultUFSsREPLICA = append(resultUFSsREPLICA, resultUFS)
+			fmt.Println("@@@@@@@@@@circle@@@@@@@@@@@@@@:", i)
+		}
+		fmt.Println("******【read count】*********: ", count)
+		fmt.Println("resultUFSLRU:", resultUFSsLRU)
+		fmt.Println("resultRemoteLRU:", resultRemotesLRU)
+		fmt.Println("resultUFSREPLICA:", resultUFSsREPLICA)
 	}
-	for i := 0; i < circle; i++ {
-		fmt.Println("@@@@@@@@@start Alluxio@@@@@@@@@@:", "REPLICA")
-		startTest.StartTest(instanceMap["Ec2Cluster-default-masters-0"], "REPLICA")
-		fmt.Println("@@@@@@@@@READ Alluxio@@@@@@@@@@:", count)
-		alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count)
-		fmt.Println("@@@@@@@@@METRIC Alluxio@@@@@@@@@@:")
-		resultRemote, resultUFS := metricsTest.BackProcess(instanceMap)
-		resultRemotesREPLICA = append(resultRemotesREPLICA, resultRemote)
-		resultUFSsREPLICA = append(resultUFSsREPLICA, resultUFS)
-		fmt.Println("@@@@@@@@@@circle@@@@@@@@@@@@@@:", circle)
-	}
-	fmt.Println("resultUFSLRU:", resultUFSsLRU)
-	fmt.Println("resultUFSREPLICA:", resultUFSsREPLICA)
-
 }
 
 // 写一个脚本程序，可以远程ssh连接到aws服务器，在aws中执行command，然后将结果返回到本地
