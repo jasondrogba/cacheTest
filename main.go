@@ -7,10 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2instanceconnect"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"jasondrogba/cacheTest/alluxioTest"
 	"jasondrogba/cacheTest/ec2test"
-	"jasondrogba/cacheTest/metricsTest"
-	"jasondrogba/cacheTest/sshTest"
 	"jasondrogba/cacheTest/startTest"
 	"log"
 	"os"
@@ -18,10 +15,10 @@ import (
 
 func main() {
 	instanceMap := ec2test.Getec2Instance()
-	sshTest.SshTest(instanceMap)
-	alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"])
-	startTest.Starttest(instanceMap["Ec2Cluster-default-masters-0"])
-	metricsTest.BackProcess()
+	//sshTest.SshTest(instanceMap)
+	//alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"])
+	startTest.Starttest(instanceMap["Ec2Cluster-default-masters-0"], "REPLICA")
+	//metricsTest.BackProcess()
 
 }
 

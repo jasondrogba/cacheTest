@@ -10,32 +10,37 @@ import (
 // 设置常量
 const (
 	//清空命令
-	freeCMD = "sudo su alluxio- c \"./bin/alluxio fs free /\""
+	testCMD = "sudo su alluxio -c \"cd /opt/alluxio && touch test\""
+	freeCMD = "sudo su alluxio -c \"cd /opt/alluxio && ./bin/alluxio fs free /\""
 	//停止命令
-	stopCMD = "sudo su alluxio -c \"./bin/alluxio-stop.sh all\""
+	stopCMD = "sudo su alluxio -c \"cd /opt/alluxio && ./bin/alluxio-stop.sh all\""
 	//格式化命令
-	formatCMD = "sudo su alluxio -c \"./bin/alluxio format\""
+	formatCMD = "sudo su alluxio -c \"cd /opt/alluxio && ./bin/alluxio format\""
 	//启动命令
-	startCMD = "sudo su alluxio -c \"./bin/alluxio-start.sh all\""
+	startCMD = "sudo su alluxio -c \"cd /opt/alluxio && ./bin/alluxio-start.sh all\""
 	//动态切换cache eviction policy
-	cacheCMD = "sudo su alluxio -c \"./bin/alluxio fsadmin updateConf alluxio.worker.block.annotator.dynamic.sort=REPLICA\""
+	cacheCMD = "sudo su alluxio -c \"cd /opt/alluxio && ./bin/alluxio fsadmin updateConf alluxio.worker.block.annotator.dynamic.sort=REPLICA\""
 	port     = "22"
 )
 
 func Starttest(hostname string, policy string) {
 	config := SetupSSH()
 	//cmd := fmt.Sprintf("sudo su alluxio -c \"cd /opt/alluxio && ./bin/alluxio fs load /%d.txt --local flag\"")
+	//multiSSH(hostname, port, config, freeCMD)
+
 	if policy == "LRU" {
+		fmt.Println("cache policy: LRU")
 		multiSSH(hostname, port, config, freeCMD)
 		multiSSH(hostname, port, config, stopCMD)
 		multiSSH(hostname, port, config, formatCMD)
 		multiSSH(hostname, port, config, startCMD)
 	}
 	if policy == "REPLICA" {
-		multiSSH(hostname, port, config, freeCMD)
-		multiSSH(hostname, port, config, stopCMD)
-		multiSSH(hostname, port, config, formatCMD)
-		multiSSH(hostname, port, config, startCMD)
+		fmt.Println("cache policy: REPLICA")
+		//multiSSH(hostname, port, config, freeCMD)
+		//multiSSH(hostname, port, config, stopCMD)
+		//multiSSH(hostname, port, config, formatCMD)
+		//multiSSH(hostname, port, config, startCMD)
 		multiSSH(hostname, port, config, cacheCMD)
 	}
 
