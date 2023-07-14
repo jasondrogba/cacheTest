@@ -63,22 +63,6 @@ func StartTest(hostname string, policy string) {
 	} else {
 		fmt.Println("Unknown system")
 	}
-	//runCMD(freeCMD)
-	//if policy == "LRU" {
-	//	fmt.Println("cache policy: LRU")
-	//	multiSSH(hostname, port, config, freeCMD)
-	//	multiSSH(hostname, port, config, stopCMD)
-	//	multiSSH(hostname, port, config, formatCMD)
-	//	multiSSH(hostname, port, config, startCMD)
-	//}
-	//if policy == "REPLICA" {
-	//	fmt.Println("cache policy: REPLICA")
-	//	//multiSSH(hostname, port, config, freeCMD)
-	//	//multiSSH(hostname, port, config, stopCMD)
-	//	//multiSSH(hostname, port, config, formatCMD)
-	//	//multiSSH(hostname, port, config, startCMD)
-	//	multiSSH(hostname, port, config, cacheCMD)
-	//}
 
 }
 

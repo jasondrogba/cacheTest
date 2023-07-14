@@ -19,14 +19,14 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 13467,
   "graphTooltip": 0,
-  "id": 2,
+  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "e5915bba-6354-4146-a137-c5a2c42ca858"
+        "uid": "abaffcc3-5f51-41ab-ab16-7bd4f0e8c2d8"
       },
       "fieldConfig": {
         "defaults": {
@@ -106,7 +106,7 @@
             "uid": "e5915bba-6354-4146-a137-c5a2c42ca858"
           },
           "editorMode": "code",
-          "expr": "Worker_BytesReadRemote_Ec2Cluster_workers_0/1024/1024/1024",
+          "expr": "sum(Worker_BytesReadRemote_Ec2Cluster_workers_0/1024/1024/1024) OR on() vector(0)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -117,7 +117,7 @@
             "uid": "e5915bba-6354-4146-a137-c5a2c42ca858"
           },
           "editorMode": "code",
-          "expr": "Worker_BytesReadRemote_Ec2Cluster_workers_1/1024/1024/1024",
+          "expr": "sum(Worker_BytesReadRemote_Ec2Cluster_workers_1/1024/1024/1024) OR on() vector(0)",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -129,7 +129,7 @@
             "uid": "e5915bba-6354-4146-a137-c5a2c42ca858"
           },
           "editorMode": "code",
-          "expr": "Worker_BytesReadRemote_Ec2Cluster_workers_2/1024/1024/1024",
+          "expr": "sum(Worker_BytesReadRemote_Ec2Cluster_workers_2/1024/1024/1024) OR on() vector(0)",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -141,7 +141,7 @@
             "uid": "e5915bba-6354-4146-a137-c5a2c42ca858"
           },
           "editorMode": "code",
-          "expr": "Worker_BytesReadRemote_Ec2Cluster_workers_3/1024/1024/1024",
+          "expr": "sum(Worker_BytesReadRemote_Ec2Cluster_workers_3/1024/1024/1024) OR on() vector(0)",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -165,7 +165,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "e5915bba-6354-4146-a137-c5a2c42ca858"
+        "uid": "abaffcc3-5f51-41ab-ab16-7bd4f0e8c2d8"
       },
       "fieldConfig": {
         "defaults": {
@@ -244,7 +244,7 @@
             "type": "prometheus",
             "uid": "e5915bba-6354-4146-a137-c5a2c42ca858"
           },
-          "editorMode": "builder",
+          "editorMode": "code",
           "expr": "Worker_BlocksEvicted_Ec2Cluster_workers_0",
           "legendFormat": "__auto",
           "range": true,
@@ -255,7 +255,7 @@
             "type": "prometheus",
             "uid": "e5915bba-6354-4146-a137-c5a2c42ca858"
           },
-          "editorMode": "builder",
+          "editorMode": "code",
           "expr": "Worker_BlocksEvicted_Ec2Cluster_workers_1",
           "hide": false,
           "legendFormat": "__auto",
@@ -384,7 +384,7 @@
             "uid": "${alluxio_datasource}"
           },
           "editorMode": "code",
-          "expr": "Worker_BytesReadPerUfs_UFS:s3:_2F_2Falluxio_tpch100_2FcacheTest_User:_Ec2Cluster_workers_0/1024/1024/1024",
+          "expr": "sum(Worker_BytesReadPerUfs_UFS:s3:_2F_2Falluxio_tpch100_2FcacheTest_User:_Ec2Cluster_workers_0)/1024/1024/1024 OR on() vector(0)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -395,7 +395,7 @@
             "uid": "${alluxio_datasource}"
           },
           "editorMode": "code",
-          "expr": "Worker_BytesReadPerUfs_UFS:s3:_2F_2Falluxio_tpch100_2FcacheTest_User:_Ec2Cluster_workers_1/1024/1024/1024",
+          "expr": "sum(Worker_BytesReadPerUfs_UFS:s3:_2F_2Falluxio_tpch100_2FcacheTest_User:_Ec2Cluster_workers_1)/1024/1024/1024 OR on() vector(0)",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -407,7 +407,7 @@
             "uid": "${alluxio_datasource}"
           },
           "editorMode": "code",
-          "expr": "Worker_BytesReadPerUfs_UFS:s3:_2F_2Falluxio_tpch100_2FcacheTest_User:_Ec2Cluster_workers_2/1024/1024/1024",
+          "expr": "sum(Worker_BytesReadPerUfs_UFS:s3:_2F_2Falluxio_tpch100_2FcacheTest_User:_Ec2Cluster_workers_2)/1024/1024/1024 OR on() vector(0)",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -419,7 +419,7 @@
             "uid": "${alluxio_datasource}"
           },
           "editorMode": "code",
-          "expr": "Worker_BytesReadPerUfs_UFS:s3:_2F_2Falluxio_tpch100_2FcacheTest_User:_Ec2Cluster_workers_3/1024/1024/1024",
+          "expr": "sum(Worker_BytesReadPerUfs_UFS:s3:_2F_2Falluxio_tpch100_2FcacheTest_User:_Ec2Cluster_workers_3)/1024/1024/1024 OR on() vector(0)",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1998,7 +1998,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2070,7 +2071,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2142,7 +2144,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2214,7 +2217,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2286,7 +2290,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2358,7 +2363,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2430,7 +2436,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2502,7 +2509,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2574,7 +2582,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2646,7 +2655,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -4198,8 +4208,8 @@
       {
         "current": {
           "selected": false,
-          "text": "Prometheus",
-          "value": "Prometheus"
+          "text": "alluxio-prometheus",
+          "value": "alluxio-prometheus"
         },
         "hide": 0,
         "includeAll": false,
@@ -4261,6 +4271,6 @@
   "timezone": "",
   "title": "Alluxio-Prometheus-Grafana-Monitor Copy",
   "uid": "e26a6af6-7795-47fe-94d4-aa875c2dd956",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }

@@ -18,9 +18,10 @@ var mutex sync.Mutex
 const ReadRemote = "BytesReadRemote"
 const ReadUFS = "BytesReadPerUfs"
 
-func BackProcess(instanceMap map[string]string) {
+func BackProcess(instanceMap map[string]string) (float64, float64) {
 	//间隔5s执行一次getMetrics
 	var count int
+	var resultRemote, resultReadUfs float64
 	ticker := time.NewTicker(time.Second * 5)
 	defer ticker.Stop()
 	previousReadUfs, previousRemote := GetMetrics(instanceMap)
@@ -37,16 +38,18 @@ func BackProcess(instanceMap map[string]string) {
 		} else {
 			count = 0
 		}
-		previousRemote, previousReadUfs = currentRemote, currentReadUfs
-		totalRemote, totalReadUfs = 0, 0
+
 		if count == 10 {
 			fmt.Println("task finish")
 			count = 0
+			resultRemote, resultReadUfs = currentRemote, currentReadUfs
 			break
 		}
-
+		previousRemote, previousReadUfs = currentRemote, currentReadUfs
+		totalRemote, totalReadUfs = 0, 0
 	}
 	fmt.Println(" go to next")
+	return resultRemote, resultReadUfs
 
 }
 
@@ -75,6 +78,7 @@ func GetMetrics(instanceMap map[string]string) (float64, float64) {
 	//GetReadUfsFromWorker(worker3)
 
 }
+
 func GetReadUfsFromWorker(hostname string) {
 	// get prometheus metrics from master
 	defer wg.Done()

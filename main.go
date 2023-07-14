@@ -18,21 +18,39 @@ import (
 
 func main() {
 	//done := make(chan bool)
-	count, policy, circle := getArgTest.ParseArgs()
+	count, _, circle := getArgTest.ParseArgs()
 	instanceMap := ec2test.Getec2Instance()
 	//sshTest.SshTest(instanceMap)
 	//go metricsTest.BackProcess(instanceMap, done)
+	resultRemotesLRU := make([]float64, 0)
+	resultRemotesREPLICA := make([]float64, 0)
 
-	for circle > 0 {
-		fmt.Println("@@@@@@@@@start Alluxio@@@@@@@@@@:", policy)
-		startTest.StartTest(instanceMap["Ec2Cluster-default-masters-0"], policy)
+	resultUFSsLRU := make([]float64, 0)
+	resultUFSsREPLICA := make([]float64, 0)
+	for i := 0; i < circle; i++ {
+		fmt.Println("@@@@@@@@@start Alluxio@@@@@@@@@@:", "LRU")
+		startTest.StartTest(instanceMap["Ec2Cluster-default-masters-0"], "LRU")
 		fmt.Println("@@@@@@@@@READ Alluxio@@@@@@@@@@:", count)
 		alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count)
 		fmt.Println("@@@@@@@@@METRIC Alluxio@@@@@@@@@@:")
-		metricsTest.BackProcess(instanceMap)
-		circle--
+		resultRemote, resultUFS := metricsTest.BackProcess(instanceMap)
+		resultRemotesLRU = append(resultRemotesLRU, resultRemote)
+		resultUFSsLRU = append(resultUFSsLRU, resultUFS)
 		fmt.Println("@@@@@@@@@@circle@@@@@@@@@@@@@@:", circle)
 	}
+	for i := 0; i < circle; i++ {
+		fmt.Println("@@@@@@@@@start Alluxio@@@@@@@@@@:", "REPLICA")
+		startTest.StartTest(instanceMap["Ec2Cluster-default-masters-0"], "REPLICA")
+		fmt.Println("@@@@@@@@@READ Alluxio@@@@@@@@@@:", count)
+		alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count)
+		fmt.Println("@@@@@@@@@METRIC Alluxio@@@@@@@@@@:")
+		resultRemote, resultUFS := metricsTest.BackProcess(instanceMap)
+		resultRemotesREPLICA = append(resultRemotesREPLICA, resultRemote)
+		resultUFSsREPLICA = append(resultUFSsREPLICA, resultUFS)
+		fmt.Println("@@@@@@@@@@circle@@@@@@@@@@@@@@:", circle)
+	}
+	fmt.Println("resultUFSLRU:", resultUFSsLRU)
+	fmt.Println("resultUFSREPLICA:", resultUFSsREPLICA)
 
 }
 

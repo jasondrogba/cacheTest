@@ -35,42 +35,42 @@ func ReadAlluxio(hostname string, count int) {
 
 func multiReadRand(i int, hostname string) {
 	fs := alluxio.NewClient(hostname, 39999, 0)
-	log.Println("第", i, "次")
-	index := rand.Int() % 80
-	if index > 40 {
-		index = (index-40)/4 + 1
+	//log.Println("第", i, "次")
+	index := rand.Int() % 100
+	if index > 60 {
+		index = (index-60)/4 + 1
 	}
 	pathfile := fmt.Sprintf("/%d.txt", index)
-	//v := 0
-	log.Println("种子：", index)
 	v := 0
+	//log.Println("种子：", index)
+	//v := 0
 	//mutex.Lock()
 	exists, err := fs.Exists(pathfile, &option.Exists{})
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println(index, "文件是否存在：", exists)
+	//log.Println(index, "文件是否存在：", exists)
 	if exists {
 		f, err := fs.OpenFile(pathfile, &option.OpenFile{})
 		defer fs.Close(f)
 		if err != nil {
 			log.Println(err)
 		}
-		log.Println(index, "文件打开成功")
+		//log.Println(index, "文件打开成功")
 		data, err := fs.Read(f)
 		if err != nil {
 			log.Println(err)
 		}
-		log.Println(index, "文件读取成功")
+		//log.Println(index, "文件读取成功")
 		//mutex.Unlock()
 		defer data.Close()
 		content, err := io.ReadAll(data)
 		if err != nil {
 			log.Println(err)
 		}
-		log.Println(index, "文件本地IO成功")
+		//log.Println(index, "文件本地IO成功")
 		v = len(content)
-		log.Println(index, "文件内容长度", v)
+		log.Print(index, "文件内容长度:", v)
 		//TODO():加上运行的时间，可以对比时间消耗是否有减少
 	} else {
 		log.Println(index, "文件不存在")
