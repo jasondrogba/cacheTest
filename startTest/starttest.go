@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang.org/x/crypto/ssh"
 	"os"
+	"os/exec"
 	"runtime"
 )
 
@@ -23,27 +24,75 @@ const (
 	port     = "22"
 )
 
-func Starttest(hostname string, policy string) {
-	config := SetupSSH()
+func StartTest(hostname string, policy string) {
+	//config := SetupSSH()
 	//cmd := fmt.Sprintf("sudo su alluxio -c \"cd /opt/alluxio && ./bin/alluxio fs load /%d.txt --local flag\"")
 	//multiSSH(hostname, port, config, freeCMD)
+	if osDetect() == "linux" {
+		fmt.Println("Detected Linux system")
+		if policy == "LRU" {
 
-	if policy == "LRU" {
-		fmt.Println("cache policy: LRU")
-		multiSSH(hostname, port, config, freeCMD)
-		multiSSH(hostname, port, config, stopCMD)
-		multiSSH(hostname, port, config, formatCMD)
-		multiSSH(hostname, port, config, startCMD)
-	}
-	if policy == "REPLICA" {
-		fmt.Println("cache policy: REPLICA")
-		//multiSSH(hostname, port, config, freeCMD)
-		//multiSSH(hostname, port, config, stopCMD)
-		//multiSSH(hostname, port, config, formatCMD)
-		//multiSSH(hostname, port, config, startCMD)
-		multiSSH(hostname, port, config, cacheCMD)
-	}
+			runCMD(freeCMD)
+			runCMD(stopCMD)
+			runCMD(formatCMD)
+			runCMD(startCMD)
+		} else {
+			runCMD(freeCMD)
+			runCMD(stopCMD)
+			runCMD(formatCMD)
+			runCMD(startCMD)
+			runCMD(cacheCMD)
+		}
 
+	} else if osDetect() == "darwin" {
+		fmt.Println("Detected macOS system")
+		config := SetupSSH()
+		if policy == "LRU" {
+			multiSSH(hostname, port, config, freeCMD)
+			multiSSH(hostname, port, config, stopCMD)
+			multiSSH(hostname, port, config, formatCMD)
+			multiSSH(hostname, port, config, startCMD)
+		} else {
+			multiSSH(hostname, port, config, freeCMD)
+			multiSSH(hostname, port, config, stopCMD)
+			multiSSH(hostname, port, config, formatCMD)
+			multiSSH(hostname, port, config, startCMD)
+			multiSSH(hostname, port, config, cacheCMD)
+		}
+
+	} else {
+		fmt.Println("Unknown system")
+	}
+	//runCMD(freeCMD)
+	//if policy == "LRU" {
+	//	fmt.Println("cache policy: LRU")
+	//	multiSSH(hostname, port, config, freeCMD)
+	//	multiSSH(hostname, port, config, stopCMD)
+	//	multiSSH(hostname, port, config, formatCMD)
+	//	multiSSH(hostname, port, config, startCMD)
+	//}
+	//if policy == "REPLICA" {
+	//	fmt.Println("cache policy: REPLICA")
+	//	//multiSSH(hostname, port, config, freeCMD)
+	//	//multiSSH(hostname, port, config, stopCMD)
+	//	//multiSSH(hostname, port, config, formatCMD)
+	//	//multiSSH(hostname, port, config, startCMD)
+	//	multiSSH(hostname, port, config, cacheCMD)
+	//}
+
+}
+
+func osDetect() (os string) {
+	if runtime.GOOS == "linux" {
+		//fmt.Println("Detected Linux system")
+		return "linux"
+	} else if runtime.GOOS == "darwin" {
+		//fmt.Println("Detected macOS system")
+		return "darwin"
+	} else {
+		fmt.Println("Unknown system")
+		return "Unknown system"
+	}
 }
 
 func SetupSSH() *ssh.ClientConfig {
@@ -104,4 +153,13 @@ func multiSSH(instance string, port string, config *ssh.ClientConfig, cmd string
 	}
 	fmt.Print(string(output))
 
+}
+
+func runCMD(cmd string) {
+	runcmd := exec.Command("bash", "-c", cmd)
+	output, err := runcmd.Output()
+	if err != nil {
+		fmt.Println("Failed to run command:", err)
+	}
+	fmt.Println(string(output))
 }

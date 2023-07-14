@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"jasondrogba/cacheTest/ec2test"
 	"net/http"
 	"strings"
 	"sync"
@@ -15,20 +14,20 @@ var wg sync.WaitGroup
 var totalReadUfs float64
 var totalRemote float64
 var mutex sync.Mutex
-var count int
 
 const ReadRemote = "BytesReadRemote"
 const ReadUFS = "BytesReadPerUfs"
 
-func BackProcess() {
+func BackProcess(instanceMap map[string]string) {
 	//间隔5s执行一次getMetrics
+	var count int
 	ticker := time.NewTicker(time.Second * 5)
 	defer ticker.Stop()
-	previousReadUfs, previousRemote := GetMetrics()
+	previousReadUfs, previousRemote := GetMetrics(instanceMap)
 	totalRemote, totalReadUfs = 0, 0
 
 	for range ticker.C {
-		currentReadUfs, currentRemote := GetMetrics()
+		currentReadUfs, currentRemote := GetMetrics(instanceMap)
 		if currentRemote == 0 && currentReadUfs == 0 {
 			continue
 		}
@@ -40,17 +39,19 @@ func BackProcess() {
 		}
 		previousRemote, previousReadUfs = currentRemote, currentReadUfs
 		totalRemote, totalReadUfs = 0, 0
-		if count == 3 {
+		if count == 10 {
 			fmt.Println("task finish")
+			count = 0
 			break
 		}
 
 	}
 	fmt.Println(" go to next")
+
 }
 
-func GetMetrics() (float64, float64) {
-	instanceMap := ec2test.Getec2Instance()
+func GetMetrics(instanceMap map[string]string) (float64, float64) {
+	//instanceMap := ec2test.Getec2Instance()
 	//master := instanceMap["Ec2Cluster-default-masters-0"]
 	//worker0 := instanceMap["Ec2Cluster-default-workers-0"]
 	//worker1 := instanceMap["Ec2Cluster-default-workers-1"]

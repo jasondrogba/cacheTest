@@ -3,7 +3,7 @@ package alluxioTest
 import (
 	"fmt"
 	"golang.org/x/crypto/ssh"
-	"jasondrogba/cacheTest/sshTest"
+	"jasondrogba/alluxio-cacheTest/sshTest"
 	"log"
 	"os"
 )

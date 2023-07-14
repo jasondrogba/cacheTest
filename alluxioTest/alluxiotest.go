@@ -2,7 +2,7 @@ package alluxioTest
 
 import (
 	"fmt"
-	"github.com/Alluxio/alluxio-go"
+	alluxio "github.com/Alluxio/alluxio-go"
 	"github.com/Alluxio/alluxio-go/option"
 	"io"
 	"log"
@@ -14,13 +14,13 @@ import (
 var wg sync.WaitGroup
 var mutex sync.Mutex
 
-func ReadAlluxio(hostname string) {
+func ReadAlluxio(hostname string, count int) {
 	//TODO():将循环改为并发
 	//计算下面循环的时间
 	startTime := time.Now()
 	rand.Seed(int64(12345))
 	fmt.Println("开始测试")
-	for i := 1; i <= 500; i++ {
+	for i := 1; i <= count; i++ {
 		//wg.Add(1)
 		//go forPrinttest(i)
 		multiReadRand(i, hostname)

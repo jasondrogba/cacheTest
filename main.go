@@ -7,18 +7,32 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2instanceconnect"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"jasondrogba/cacheTest/ec2test"
-	"jasondrogba/cacheTest/startTest"
+	"jasondrogba/alluxio-cacheTest/alluxioTest"
+	"jasondrogba/alluxio-cacheTest/ec2test"
+	"jasondrogba/alluxio-cacheTest/getArgTest"
+	"jasondrogba/alluxio-cacheTest/metricsTest"
+	"jasondrogba/alluxio-cacheTest/startTest"
 	"log"
 	"os"
 )
 
 func main() {
+	//done := make(chan bool)
+	count, policy, circle := getArgTest.ParseArgs()
 	instanceMap := ec2test.Getec2Instance()
 	//sshTest.SshTest(instanceMap)
-	//alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"])
-	startTest.Starttest(instanceMap["Ec2Cluster-default-masters-0"], "REPLICA")
-	//metricsTest.BackProcess()
+	//go metricsTest.BackProcess(instanceMap, done)
+
+	for circle > 0 {
+		fmt.Println("@@@@@@@@@start Alluxio@@@@@@@@@@:", policy)
+		startTest.StartTest(instanceMap["Ec2Cluster-default-masters-0"], policy)
+		fmt.Println("@@@@@@@@@READ Alluxio@@@@@@@@@@:", count)
+		alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count)
+		fmt.Println("@@@@@@@@@METRIC Alluxio@@@@@@@@@@:")
+		metricsTest.BackProcess(instanceMap)
+		circle--
+		fmt.Println("@@@@@@@@@@circle@@@@@@@@@@@@@@:", circle)
+	}
 
 }
 
