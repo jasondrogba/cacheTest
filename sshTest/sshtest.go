@@ -24,7 +24,7 @@ func SshTest(instanceMap map[string]string) {
 
 	fmt.Println("start worker0")
 	//establishSSH(worker0, port, config, 20)
-	for i := 1; i <= 20; i++ {
+	for i := 1; i <= 18; i++ {
 		wg.Add(1)
 		go multiSSH(worker0, port, config, i)
 	}
