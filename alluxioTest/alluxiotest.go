@@ -36,9 +36,9 @@ func ReadAlluxio(hostname string, count int) {
 func multiReadRand(i int, hostname string) {
 	fs := alluxio.NewClient(hostname, 39999, 0)
 	//log.Println("第", i, "次")
-	index := rand.Int() % 500
-	if index > 100 {
-		index = (index-100)/20 + 1
+	index := rand.Int() % 380
+	if index > 300 {
+		index = (index-300)/2 + 1
 	}
 	pathfile := fmt.Sprintf("/%d.txt", index)
 	v := 0
