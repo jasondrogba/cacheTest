@@ -2,53 +2,39 @@ package main
 
 import (
 	"fmt"
-	"jasondrogba/alluxio-cacheTest/alluxioTest"
 	"jasondrogba/alluxio-cacheTest/ec2test"
 	"jasondrogba/alluxio-cacheTest/getArgTest"
-	"jasondrogba/alluxio-cacheTest/metricsTest"
-	"jasondrogba/alluxio-cacheTest/sshTest"
-	"jasondrogba/alluxio-cacheTest/startTest"
+	"jasondrogba/alluxio-cacheTest/policyTest"
+	"time"
 )
 
 func main() {
 
-	_, _, circle := getArgTest.ParseArgs()
+	count, _, circle := getArgTest.ParseArgs()
 	instanceMap := ec2test.Getec2Instance()
 
-	for count := 3; count < 10; count++ {
-		resultRemotesLRU := make([]float64, 0)
-		resultRemotesREPLICA := make([]float64, 0)
-		resultUFSsLRU := make([]float64, 0)
-		resultUFSsREPLICA := make([]float64, 0)
-		for i := 0; i < circle; i++ {
-			fmt.Println("@@@@@@@@@start Alluxio@@@@@@@@@@:", "LRU")
-			startTest.StartTest(instanceMap["Ec2Cluster-default-masters-0"], "LRU")
-			fmt.Println("@@@@@@@@@LOAD Alluxio@@@@@@@@@@:", "worker0:1~18,worker1:1~10:worker2:1~5")
-			sshTest.SshTest(instanceMap)
-			fmt.Println("@@@@@@@@@READ Alluxio@@@@@@@@@@:", count*100)
-			alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count*100)
-			fmt.Println("@@@@@@@@@METRIC Alluxio@@@@@@@@@@:")
-			resultRemote, resultUFS := metricsTest.BackProcess(instanceMap)
-			resultRemotesLRU = append(resultRemotesLRU, resultRemote)
-			resultUFSsLRU = append(resultUFSsLRU, resultUFS)
-			fmt.Println("@@@@@@@@@@circle@@@@@@@@@@@@@@:", i)
-		}
-		for i := 0; i < circle; i++ {
-			fmt.Println("@@@@@@@@@start Alluxio@@@@@@@@@@:", "REPLICA")
-			startTest.StartTest(instanceMap["Ec2Cluster-default-masters-0"], "REPLICA")
-			fmt.Println("@@@@@@@@@LOAD Alluxio@@@@@@@@@@:", "worker0:1~18,worker1:1~10:worker2:1~5")
-			sshTest.SshTest(instanceMap)
-			fmt.Println("@@@@@@@@@READ Alluxio@@@@@@@@@@:", count*100)
-			alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count*100)
-			fmt.Println("@@@@@@@@@METRIC Alluxio@@@@@@@@@@:")
-			resultRemote, resultUFS := metricsTest.BackProcess(instanceMap)
-			resultRemotesREPLICA = append(resultRemotesREPLICA, resultRemote)
-			resultUFSsREPLICA = append(resultUFSsREPLICA, resultUFS)
-			fmt.Println("@@@@@@@@@@circle@@@@@@@@@@@@@@:", i)
-		}
-		fmt.Println("******【read count】*********: ", count)
-		fmt.Println("resultUFSLRU:", resultUFSsLRU)
-		fmt.Println("resultRemoteLRU:", resultRemotesLRU)
-		fmt.Println("resultUFSREPLICA:", resultUFSsREPLICA)
+	//计算下面循环的时间
+	startTime := time.Now()
+	fmt.Println("开始测试")
+
+	//单次循环执行一次LRU，执行一次REPLICA，执行一个动态策略
+	for i := 1; i <= circle; i++ {
+		//执行完整LRU测试，600次读取
+		fmt.Println("第", i, "次循环", "执行LRU策略600次")
+		resultLRURemote, resultLRUUFS := policyTest.PolicyTest(instanceMap, "LRU", count)
+		//执行完整REPLICA测试，600次读取
+		fmt.Println("第", i, "次循环", "执行REPLICA策略600次")
+		resultREPLICARemote, resultREPLICAUFS := policyTest.PolicyTest(instanceMap, "REPLICA", count)
+		//执行动态策略测试，300次REPLICA策略读取，执行切换，后300次LRU
+		fmt.Println("第", i, "次循环", "执行动态策略300次REPLICA，300次LRU")
+		resultDynamicRemote, resultDynamicUFS := policyTest.DynamicTest(instanceMap, count)
+		fmt.Println("resultLRURemote:", resultLRURemote, "resultLRUUFS:", resultLRUUFS)
+		fmt.Println("resultREPLICARemote:", resultREPLICARemote, "resultREPLICAUFS:", resultREPLICAUFS)
+		fmt.Println("resultDynamicRemote:", resultDynamicRemote, "resultDynamicUFS:", resultDynamicUFS)
+
 	}
+	endTime := time.Now()
+	fmt.Println("测试结束")
+	fmt.Println("测试时间：", endTime.Sub(startTime))
+
 }

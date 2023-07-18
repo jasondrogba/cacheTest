@@ -21,7 +21,9 @@ const (
 	startCMD = "sudo su alluxio -c \"cd /opt/alluxio && ./bin/alluxio-start.sh all\""
 	//动态切换cache eviction policy
 	cacheCMD = "sudo su alluxio -c \"cd /opt/alluxio && ./bin/alluxio fsadmin updateConf alluxio.worker.block.annotator.dynamic.sort=REPLICA\""
-	port     = "22"
+	LRUCMD   = "sudo su alluxio -c \"cd /opt/alluxio && ./bin/alluxio fsadmin updateConf alluxio.worker.block.annotator.dynamic.sort=LRU\""
+
+	port = "22"
 )
 
 func StartTest(hostname string, policy string) {
@@ -146,4 +148,8 @@ func runCMD(cmd string) {
 		fmt.Println("Failed to run command:", err)
 	}
 	fmt.Println(string(output))
+}
+
+func SwitchLRU() {
+	runCMD(LRUCMD)
 }
