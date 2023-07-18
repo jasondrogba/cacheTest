@@ -22,7 +22,7 @@ func main() {
 	_, _, circle := getArgTest.ParseArgs()
 	instanceMap := ec2test.Getec2Instance()
 
-	for count := 3; count < 10; count++ {
+	for count := 1; count < 8; count++ {
 		resultRemotesLRU := make([]float64, 0)
 		resultRemotesREPLICA := make([]float64, 0)
 		resultUFSsLRU := make([]float64, 0)

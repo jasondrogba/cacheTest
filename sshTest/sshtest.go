@@ -24,20 +24,20 @@ func SshTest(instanceMap map[string]string) {
 
 	fmt.Println("start worker0")
 	//establishSSH(worker0, port, config, 20)
-	for i := 1; i <= 39; i++ {
+	for i := 1; i <= 13; i++ {
 		wg.Add(1)
 		go multiSSH(worker0, port, config, i)
 	}
 	fmt.Println("start worker1")
 	//establishSSH(worker1, port, config, 10)
-	for i := 1; i <= 30; i++ {
+	for i := 1; i <= 10; i++ {
 		wg.Add(1)
 
 		go multiSSH(worker1, port, config, i)
 	}
 	fmt.Println("start worker2")
 	//establishSSH(worker2, port, config, 5)
-	for i := 1; i <= 15; i++ {
+	for i := 1; i <= 5; i++ {
 		wg.Add(1)
 
 		go multiSSH(worker2, port, config, i)
