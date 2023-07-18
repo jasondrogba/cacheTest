@@ -1,18 +1,13 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"jasondrogba/alluxio-cacheTest/alluxioTest"
 	"jasondrogba/alluxio-cacheTest/ec2test"
 	"jasondrogba/alluxio-cacheTest/getArgTest"
 	"jasondrogba/alluxio-cacheTest/metricsTest"
 	"jasondrogba/alluxio-cacheTest/sshTest"
 	"jasondrogba/alluxio-cacheTest/startTest"
-	"log"
 )
 
 func main() {
@@ -56,31 +51,4 @@ func main() {
 		fmt.Println("resultRemoteLRU:", resultRemotesLRU)
 		fmt.Println("resultUFSREPLICA:", resultUFSsREPLICA)
 	}
-}
-
-// 写一个脚本程序，可以远程ssh连接到aws服务器，在aws中执行command，然后将结果返回到本地
-func s3list() {
-	// Load the Shared AWS Configuration (~/.aws/config)
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		log.Fatal(err)
-	}
-	// Create an Amazon S3 service client
-
-	client := s3.NewFromConfig(cfg)
-
-	// Get the list of buckets
-	// Get the first page of results for ListObjectsV2 for a bucket
-	output, err := client.ListObjectsV2(context.TODO(), &s3.ListObjectsV2Input{
-		Bucket: aws.String("alluxio-tpch100"),
-	})
-
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("first page results:")
-	for _, object := range output.Contents {
-		log.Printf("key=%s size=%d", aws.ToString(object.Key), object.Size)
-	}
-
 }
