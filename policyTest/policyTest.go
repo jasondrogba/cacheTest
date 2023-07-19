@@ -15,7 +15,7 @@ func PolicyTest(instanceMap map[string]string, policy string, count int) (float6
 	fmt.Println("LOAD Alluxio:", "worker0:1~13,worker1:1~10:worker2:1~5")
 	sshTest.SshTest(instanceMap)
 	fmt.Println("READ Alluxio:", count)
-	alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count, false)
+	alluxioTest.ReadAlluxio(instanceMap, count, false)
 	fmt.Println("METRIC Alluxio:")
 	resultRemote, resultUFS := metricsTest.BackProcess(instanceMap)
 	return resultRemote, resultUFS
@@ -27,7 +27,7 @@ func DynamicTest(instanceMap map[string]string, count int) (float64, float64) {
 	fmt.Println("LOAD Alluxio:", "worker0:1~13,worker1:1~10:worker2:1~5")
 	sshTest.SshTest(instanceMap)
 	fmt.Println("READ Alluxio:", count)
-	alluxioTest.ReadAlluxio(instanceMap["Ec2Cluster-default-masters-0"], count, true)
+	alluxioTest.ReadAlluxio(instanceMap, count, true)
 	fmt.Println("METRIC Alluxio:")
 	resultRemote, resultUFS := metricsTest.BackProcess(instanceMap)
 	return resultRemote, resultUFS

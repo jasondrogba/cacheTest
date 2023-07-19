@@ -19,28 +19,35 @@ func SshTest(instanceMap map[string]string) {
 	worker0 := instanceMap["Ec2Cluster-default-workers-0"]
 	worker1 := instanceMap["Ec2Cluster-default-workers-1"]
 	worker2 := instanceMap["Ec2Cluster-default-workers-2"]
-	//worker3 := instanceMap["Ec2Cluster-default-workers-3"]
+	worker3 := instanceMap["Ec2Cluster-default-workers-3"]
 	port := "22"
 
 	fmt.Println("start worker0")
 	//establishSSH(worker0, port, config, 20)
-	for i := 1; i <= 13; i++ {
+	for i := 1; i <= 39; i++ {
 		wg.Add(1)
 		go multiSSH(worker0, port, config, i)
 	}
 	fmt.Println("start worker1")
 	//establishSSH(worker1, port, config, 10)
-	for i := 1; i <= 10; i++ {
+	for i := 1; i <= 39; i++ {
 		wg.Add(1)
 
 		go multiSSH(worker1, port, config, i)
 	}
 	fmt.Println("start worker2")
 	//establishSSH(worker2, port, config, 5)
-	for i := 1; i <= 5; i++ {
+	for i := 1; i <= 39; i++ {
 		wg.Add(1)
 
 		go multiSSH(worker2, port, config, i)
+	}
+	fmt.Println("start worker3")
+	//establishSSH(worker2, port, config, 5)
+	for i := 1; i <= 39; i++ {
+		wg.Add(1)
+
+		go multiSSH(worker3, port, config, i)
 	}
 
 	wg.Wait()

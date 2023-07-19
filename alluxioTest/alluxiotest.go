@@ -5,6 +5,7 @@ import (
 	alluxio "github.com/Alluxio/alluxio-go"
 	"github.com/Alluxio/alluxio-go/option"
 	"io"
+	"jasondrogba/alluxio-cacheTest/metricsTest"
 	"jasondrogba/alluxio-cacheTest/startTest"
 	"log"
 	"math/rand"
@@ -14,17 +15,23 @@ import (
 var wg sync.WaitGroup
 var mutex sync.Mutex
 
-func ReadAlluxio(hostname string, count int, dynamic bool) {
+func ReadAlluxio(instanceMap map[string]string, count int, dynamic bool) {
 	//TODO():将循环改为并发
-
+	hostname := instanceMap["Ec2Cluster-default-masters-0"]
 	rand.Seed(int64(12345))
 	for i := 1; i <= count; i++ {
 
 		multiReadRand(i, hostname, count)
-		if i == (count/2) && dynamic {
-			fmt.Println("现在动态缓存策略，需要调整REPLICA到LRU")
-			startTest.SwitchLRU()
-			dynamic = false
+		if i == (count / 2) {
+			resultRemote, resultUfs := metricsTest.BackProcess(instanceMap)
+			fmt.Println("前一半的远程读取时间halfresultRemote：", resultRemote)
+			fmt.Println("前一半的UFS读取时间halfresultUfs：", resultUfs)
+			if dynamic {
+				fmt.Println("现在动态缓存策略，需要调整REPLICA到LRU")
+				startTest.SwitchLRU()
+				dynamic = false
+			}
+
 		}
 	}
 
@@ -34,12 +41,12 @@ func multiReadRand(i int, hostname string, count int) {
 	fs := alluxio.NewClient(hostname, 39999, 0)
 	index := rand.Int()
 	if i <= count/2 {
-		index = index % 1000
-		if index > 100 {
-			index = (index-100)/45 + 1
+		index = index % 2600
+		if index > 300 {
+			index = (index-300)/60 + 1
 		}
 	} else {
-		index = index%100 + 1
+		index = index%300 + 1
 	}
 
 	pathfile := fmt.Sprintf("/%d.txt", index)
