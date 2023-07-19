@@ -39,10 +39,7 @@ func multiReadRand(i int, hostname string, count int) {
 			index = (index-100)/45 + 1
 		}
 	} else {
-		index = index % 160
-		if index > 100 {
-			index = (index-100)/3 + 1
-		}
+		index = index%100 + 1
 	}
 
 	pathfile := fmt.Sprintf("/%d.txt", index)
